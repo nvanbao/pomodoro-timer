@@ -12,6 +12,7 @@ const modeButtons = document.querySelectorAll("[data-mode]");
 let currentMode = "focus";
 let remainingSeconds = MODES[currentMode].minutes * 60;
 let timerId = null;
+let endTime = null;
 
 const STORAGE_KEY = "pomodoro-sessions";
 
@@ -57,7 +58,7 @@ function render() {
 }
 
 function tick() {
-    remainingSeconds -= 1;
+    remainingSeconds = Math.max(0, Math.round((endTime - Date.now()) / 1000));
     render();
     if (remainingSeconds <= 0) {
         finishSession();
@@ -67,7 +68,8 @@ function tick() {
 function start() {
     if (timerId !== null) return;
     statusEl.textContent = "";
-    timerId = setInterval(tick, 1000);
+    endTime = Date.now() + remainingSeconds * 1000;
+    timerId = setInterval(tick, 500);
 }
 
 function stop() {
