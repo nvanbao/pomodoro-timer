@@ -12,7 +12,34 @@ const modeButtons = document.querySelectorAll("[data-mode]");
 let currentMode = "focus";
 let remainingSeconds = MODES[currentMode].minutes * 60;
 let timerId = null;
-let completedSessions = 0;
+
+const STORAGE_KEY = "pomodoro-sessions";
+
+function todayString() {
+    const d = new Date();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${d.getFullYear()}-${month}-${day}`;
+}
+
+function loadSessions() {
+    try {
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return data && data.date === todayString() ? data.count : 0;
+    } catch (error) {
+        return 0;
+    }
+}
+
+function saveSessions(count) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ date: todayString(), count }));
+    } catch (error) {
+        // bỏ qua nếu trình duyệt chặn localStorage
+    }
+}
+
+let completedSessions = loadSessions();
 
 function formatTime(totalSeconds) {
     const minutes = Math.floor(totalSeconds / 60);
@@ -60,6 +87,7 @@ function finishSession() {
     if (currentMode === "focus") {
         completedSessions += 1;
         countEl.textContent = completedSessions;
+        saveSessions(completedSessions);
         const next = completedSessions % 4 === 0 ? "long" : "short";
         setMode(next);
         statusEl.textContent = `Hết giờ tập trung! Đến lúc ${MODES[next].label.toLowerCase()}.`;
@@ -70,6 +98,7 @@ function finishSession() {
 }
 
 render();
+countEl.textContent = completedSessions;
 
 document.getElementById("start").addEventListener("click", start);
 document.getElementById("pause").addEventListener("click", stop);
