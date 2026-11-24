@@ -5,11 +5,14 @@ const MODES = {
 };
 
 const timeEl = document.getElementById("time");
+const statusEl = document.getElementById("status");
+const countEl = document.getElementById("count");
 const modeButtons = document.querySelectorAll("[data-mode]");
 
 let currentMode = "focus";
 let remainingSeconds = MODES[currentMode].minutes * 60;
 let timerId = null;
+let completedSessions = 0;
 
 function formatTime(totalSeconds) {
     const minutes = Math.floor(totalSeconds / 60);
@@ -18,7 +21,9 @@ function formatTime(totalSeconds) {
 }
 
 function render() {
-    timeEl.textContent = formatTime(remainingSeconds);
+    const time = formatTime(remainingSeconds);
+    timeEl.textContent = time;
+    document.title = `${time} - ${MODES[currentMode].label}`;
     modeButtons.forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.mode === currentMode);
     });
@@ -28,12 +33,13 @@ function tick() {
     remainingSeconds -= 1;
     render();
     if (remainingSeconds <= 0) {
-        stop();
+        finishSession();
     }
 }
 
 function start() {
     if (timerId !== null) return;
+    statusEl.textContent = "";
     timerId = setInterval(tick, 1000);
 }
 
@@ -47,6 +53,20 @@ function setMode(mode) {
     currentMode = mode;
     remainingSeconds = MODES[mode].minutes * 60;
     render();
+}
+
+function finishSession() {
+    stop();
+    if (currentMode === "focus") {
+        completedSessions += 1;
+        countEl.textContent = completedSessions;
+        const next = completedSessions % 4 === 0 ? "long" : "short";
+        setMode(next);
+        statusEl.textContent = `Hết giờ tập trung! Đến lúc ${MODES[next].label.toLowerCase()}.`;
+    } else {
+        setMode("focus");
+        statusEl.textContent = "Hết giờ nghỉ! Quay lại tập trung nào.";
+    }
 }
 
 render();
