@@ -34,3 +34,44 @@ time{
     color: #991b1b;
     font-variant-numeric: tabular-nums;
 }
+
+.modes,
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #b91c1c;
+}
+
+.modes button {
+    background: #fee2e2;
+    color: #7f1d1d;
+}
+
+.modes button:hover {
+    background: #fecaca;
+}
+
+.modes button.active {
+    background: #dc2626;
+    color: #ffffff;
+}
+
+#status {
+    min-height: 1.2em;
+    color: #6b7280;
+}
