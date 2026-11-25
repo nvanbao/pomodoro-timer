@@ -204,6 +204,13 @@ function showNotification(title, body) {
 function finishSession() {
     stop();
     playBeep();
+    const cardEl = document.querySelector(".card");
+    if (cardEl) {
+        cardEl.classList.remove("alert");
+        void cardEl.offsetWidth;
+        cardEl.classList.add("alert");
+        setTimeout(() => cardEl.classList.remove("alert"), 2500);
+    }
     if (currentMode === "focus") {
         completedSessions += 1;
         countEl.textContent = completedSessions;

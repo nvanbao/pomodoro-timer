@@ -20,6 +20,21 @@ body{
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,  0 , 0 ,0.1);
     text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@keyframes pulse-card {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 24px rgba(220, 38, 38, 0.4);
+    }
+}
+
+.card.alert {
+    animation: pulse-card 0.8s ease-in-out 3;
 }
 
 .card-header {
