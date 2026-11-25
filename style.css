@@ -158,3 +158,27 @@ button:hover {
     justify-content: flex-start;
     gap: 8px;
 }
+
+@media (prefers-color-scheme: dark) {
+    .progress {
+        background: #44403c;
+    }
+
+    .settings {
+        border-top-color: #44403c;
+    }
+
+    .settings h2 {
+        color: #fecaca;
+    }
+
+    .settings label {
+        color: #d6d3d1;
+    }
+
+    .settings input[type="number"] {
+        background: #1c1917;
+        color: #fafaf9;
+        border-color: #57534e;
+    }
+}
