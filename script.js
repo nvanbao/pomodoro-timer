@@ -7,10 +7,12 @@ const MODES = {
 const timeEl = document.getElementById("time");
 const statusEl = document.getElementById("status");
 const countEl = document.getElementById("count");
+const progressEl = document.getElementById("progress-bar");
 const modeButtons = document.querySelectorAll("[data-mode]");
 
 let currentMode = "focus";
 let remainingSeconds = MODES[currentMode].minutes * 60;
+let totalSeconds = remainingSeconds;
 let timerId = null;
 let endTime = null;
 
@@ -52,6 +54,8 @@ function render() {
     const time = formatTime(remainingSeconds);
     timeEl.textContent = time;
     document.title = `${time} - ${MODES[currentMode].label}`;
+    const percent = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
+    progressEl.style.width = `${Math.min(100, Math.max(0, percent))}%`;
     modeButtons.forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.mode === currentMode);
     });
@@ -81,6 +85,7 @@ function setMode(mode) {
     stop();
     currentMode = mode;
     remainingSeconds = MODES[mode].minutes * 60;
+    totalSeconds = remainingSeconds;
     render();
 }
 
