@@ -188,3 +188,31 @@ Object.keys(MODES).forEach((mode) => {
 });
 
 soundToggle.addEventListener("change", saveSettings);
+
+function toggleTimer() {
+    if (timerId === null) {
+        start();
+    } else {
+        stop();
+    }
+}
+
+document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    const tag = event.target.tagName;
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+    if (event.code === "Space" && tag !== "BUTTON") {
+        event.preventDefault();
+        toggleTimer();
+    } else if (event.key === "p" || event.key === "P") {
+        toggleTimer();
+    } else if (event.key === "r" || event.key === "R") {
+        setMode(currentMode);
+    } else if (event.key === "1") {
+        setMode("focus");
+    } else if (event.key === "2") {
+        setMode("short");
+    } else if (event.key === "3") {
+        setMode("long");
+    }
+});
