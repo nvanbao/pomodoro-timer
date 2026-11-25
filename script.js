@@ -132,8 +132,28 @@ function setMode(mode) {
     render();
 }
 
+function playBeep() {
+    if (!soundToggle.checked) return;
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioContextClass();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 880;
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.8);
+    } catch (error) {
+        // bỏ qua nếu trình duyệt không hỗ trợ âm thanh
+    }
+}
+
 function finishSession() {
     stop();
+    playBeep();
     if (currentMode === "focus") {
         completedSessions += 1;
         countEl.textContent = completedSessions;
