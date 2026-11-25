@@ -154,9 +154,39 @@ button:hover {
     font-size: 1rem;
 }
 
-.settings .sound {
+.settings .sound,
+.settings .notification {
     justify-content: flex-start;
     gap: 8px;
+}
+
+.settings .sound-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.settings select {
+    padding: 6px 8px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #44403c;
+    font-size: 0.95rem;
+}
+
+#test-sound {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    background: #fee2e2;
+    color: #7f1d1d;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+#test-sound:hover {
+    background: #fecaca;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -176,9 +206,15 @@ button:hover {
         color: #d6d3d1;
     }
 
-    .settings input[type="number"] {
+    .settings input[type="number"],
+    .settings select {
         background: #1c1917;
         color: #fafaf9;
         border-color: #57534e;
+    }
+
+    #test-sound {
+        background: #44403c;
+        color: #fecaca;
     }
 }
