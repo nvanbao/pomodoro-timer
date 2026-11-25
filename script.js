@@ -11,6 +11,8 @@ const progressEl = document.getElementById("progress-bar");
 const modeButtons = document.querySelectorAll("[data-mode]");
 const soundToggle = document.getElementById("sound-toggle");
 const notificationToggle = document.getElementById("notification-toggle");
+const soundTypeSelect = document.getElementById("sound-type");
+const testSoundBtn = document.getElementById("test-sound");
 const minuteInputs = {
     focus: document.getElementById("minutes-focus"),
     short: document.getElementById("minutes-short"),
@@ -31,6 +33,7 @@ function saveSettings() {
     const data = {
         sound: soundToggle.checked,
         notification: notificationToggle.checked,
+        soundType: soundTypeSelect.value,
     };
     Object.keys(MODES).forEach((mode) => {
         data[mode] = MODES[mode].minutes;
@@ -57,6 +60,7 @@ Object.keys(MODES).forEach((mode) => {
 });
 soundToggle.checked = savedSettings.sound !== false;
 notificationToggle.checked = savedSettings.notification === true;
+soundTypeSelect.value = savedSettings.soundType || "beep";
 
 let currentMode = "focus";
 let remainingSeconds = MODES[currentMode].minutes * 60;
@@ -137,20 +141,49 @@ function setMode(mode) {
     render();
 }
 
-function playBeep() {
-    if (!soundToggle.checked) return;
+function playBeep(force = false) {
+    if (!force && !soundToggle.checked) return;
     try {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         const ctx = new AudioContextClass();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(0.2, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.8);
+        const type = soundTypeSelect ? soundTypeSelect.value : "beep";
+
+        if (type === "chime") {
+            const now = ctx.currentTime;
+            [587, 880].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = freq;
+                const startAt = now + i * 0.15;
+                gain.gain.setValueAtTime(0.2, startAt);
+                gain.gain.exponentialRampToValueAtTime(0.001, startAt + 0.6);
+                osc.start(startAt);
+                osc.stop(startAt + 0.6);
+            });
+        } else if (type === "low") {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "triangle";
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = 440;
+            gain.gain.setValueAtTime(0.25, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+            osc.start();
+            osc.stop(ctx.currentTime + 1.0);
+        } else {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = 880;
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.8);
+        }
     } catch (error) {
         // bỏ qua nếu trình duyệt không hỗ trợ âm thanh
     }
@@ -208,6 +241,8 @@ Object.keys(MODES).forEach((mode) => {
 });
 
 soundToggle.addEventListener("change", saveSettings);
+soundTypeSelect.addEventListener("change", saveSettings);
+testSoundBtn.addEventListener("click", () => playBeep(true));
 notificationToggle.addEventListener("change", async () => {
     if (notificationToggle.checked) {
         if ("Notification" in window && Notification.permission !== "granted") {
