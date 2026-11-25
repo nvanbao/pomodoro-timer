@@ -22,6 +22,35 @@ body{
     text-align: center;
 }
 
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.card-header h1 {
+    margin: 0;
+}
+
+#theme-toggle {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+}
+
+#theme-toggle:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
 h1{
     margin: 0 0 16px;
     font-size: 1.3rem;
@@ -217,4 +246,61 @@ button:hover {
         background: #44403c;
         color: #fecaca;
     }
+}
+
+body.dark {
+    background: #1c1917;
+}
+
+body.dark .card {
+    background: #292524;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+body.dark h1,
+body.dark .settings h2 {
+    color: #fecaca;
+}
+
+body.dark #time {
+    color: #fca5a5;
+}
+
+body.dark .modes button {
+    background: #44403c;
+    color: #fecaca;
+}
+
+body.dark .modes button:hover {
+    background: #57534e;
+}
+
+body.dark p,
+body.dark #status,
+body.dark .settings label {
+    color: #d6d3d1;
+}
+
+body.dark .progress {
+    background: #44403c;
+}
+
+body.dark .settings {
+    border-top-color: #44403c;
+}
+
+body.dark .settings input[type="number"],
+body.dark .settings select {
+    background: #1c1917;
+    color: #fafaf9;
+    border-color: #57534e;
+}
+
+body.dark #test-sound {
+    background: #44403c;
+    color: #fecaca;
+}
+
+body.dark #theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
