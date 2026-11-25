@@ -108,3 +108,18 @@ button:hover {
         color: #a8a29e;
     }
 }
+
+.progress {
+    height: 8px;
+    margin: 0 0 24px;
+    background: #fee2e2;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+#progress-bar {
+    width: 0;
+    height: 100%;
+    background: #dc2626;
+    transition: width 0.5s linear;
+}
