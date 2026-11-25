@@ -10,6 +10,7 @@ const countEl = document.getElementById("count");
 const progressEl = document.getElementById("progress-bar");
 const modeButtons = document.querySelectorAll("[data-mode]");
 const soundToggle = document.getElementById("sound-toggle");
+const notificationToggle = document.getElementById("notification-toggle");
 const minuteInputs = {
     focus: document.getElementById("minutes-focus"),
     short: document.getElementById("minutes-short"),
@@ -27,7 +28,10 @@ function loadSettings() {
 }
 
 function saveSettings() {
-    const data = { sound: soundToggle.checked };
+    const data = {
+        sound: soundToggle.checked,
+        notification: notificationToggle.checked,
+    };
     Object.keys(MODES).forEach((mode) => {
         data[mode] = MODES[mode].minutes;
     });
@@ -52,6 +56,7 @@ Object.keys(MODES).forEach((mode) => {
     minuteInputs[mode].value = MODES[mode].minutes;
 });
 soundToggle.checked = savedSettings.sound !== false;
+notificationToggle.checked = savedSettings.notification === true;
 
 let currentMode = "focus";
 let remainingSeconds = MODES[currentMode].minutes * 60;
@@ -151,6 +156,17 @@ function playBeep() {
     }
 }
 
+function showNotification(title, body) {
+    if (!notificationToggle.checked) return;
+    if ("Notification" in window && Notification.permission === "granted") {
+        try {
+            new Notification(title, { body });
+        } catch (error) {
+            // bỏ qua nếu trình duyệt chặn
+        }
+    }
+}
+
 function finishSession() {
     stop();
     playBeep();
@@ -160,10 +176,14 @@ function finishSession() {
         saveSessions(completedSessions);
         const next = completedSessions % 4 === 0 ? "long" : "short";
         setMode(next);
-        statusEl.textContent = `Hết giờ tập trung! Đến lúc ${MODES[next].label.toLowerCase()}.`;
+        const msg = `Hết giờ tập trung! Đến lúc ${MODES[next].label.toLowerCase()}.`;
+        statusEl.textContent = msg;
+        showNotification("Pomodoro Timer", msg);
     } else {
         setMode("focus");
-        statusEl.textContent = "Hết giờ nghỉ! Quay lại tập trung nào.";
+        const msg = "Hết giờ nghỉ! Quay lại tập trung nào.";
+        statusEl.textContent = msg;
+        showNotification("Pomodoro Timer", msg);
     }
 }
 
@@ -188,6 +208,17 @@ Object.keys(MODES).forEach((mode) => {
 });
 
 soundToggle.addEventListener("change", saveSettings);
+notificationToggle.addEventListener("change", async () => {
+    if (notificationToggle.checked) {
+        if ("Notification" in window && Notification.permission !== "granted") {
+            const permission = await Notification.requestPermission();
+            if (permission !== "granted") {
+                notificationToggle.checked = false;
+            }
+        }
+    }
+    saveSettings();
+});
 
 function toggleTimer() {
     if (timerId === null) {
