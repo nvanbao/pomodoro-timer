@@ -23,6 +23,13 @@
         </div>
         <p id="status"></p>
         <p>Số phiên đã hoàn thành :<span id="count">0</span></p>
+        <section class="settings">
+            <h2>Cài đặt</h2>
+            <label>Tập trung (phút) <input id="minutes-focus" type="number" min="1" max="120" value="25"></label>
+            <label>Nghỉ ngắn (phút) <input id="minutes-short" type="number" min="1" max="60" value="5"></label>
+            <label>Nghỉ dài (phút) <input id="minutes-long" type="number" min="1" max="60" value="15"></label>
+            <label class="sound"><input id="sound-toggle" type="checkbox" checked> Bật âm báo khi hết giờ</label>
+        </section>
     </main>
     <script src="script.js"></script>
 </body>
