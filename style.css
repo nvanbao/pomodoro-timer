@@ -123,3 +123,38 @@ button:hover {
     background: #dc2626;
     transition: width 0.5s linear;
 }
+
+.settings {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #fee2e2;
+    text-align: left;
+}
+
+.settings h2 {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    color: #7f1d1d;
+}
+
+.settings label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    color: #44403c;
+    font-size: 0.95rem;
+}
+
+.settings input[type="number"] {
+    width: 80px;
+    padding: 6px 8px;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.settings .sound {
+    justify-content: flex-start;
+    gap: 8px;
+}
