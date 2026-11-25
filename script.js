@@ -216,3 +216,10 @@ document.addEventListener("keydown", (event) => {
         setMode("long");
     }
 });
+
+window.addEventListener("beforeunload", (event) => {
+    if (timerId !== null) {
+        event.preventDefault();
+        event.returnValue = "";
+    }
+});
