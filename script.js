@@ -13,6 +13,7 @@ const soundToggle = document.getElementById("sound-toggle");
 const notificationToggle = document.getElementById("notification-toggle");
 const soundTypeSelect = document.getElementById("sound-type");
 const testSoundBtn = document.getElementById("test-sound");
+const themeToggle = document.getElementById("theme-toggle");
 const minuteInputs = {
     focus: document.getElementById("minutes-focus"),
     short: document.getElementById("minutes-short"),
@@ -287,5 +288,22 @@ window.addEventListener("beforeunload", (event) => {
     if (timerId !== null) {
         event.preventDefault();
         event.returnValue = "";
+    }
+});
+
+const THEME_KEY = "pomodoro-theme";
+const savedTheme = localStorage.getItem(THEME_KEY);
+if (savedTheme === "dark") {
+    document.body.classList.add("dark");
+} else if (savedTheme === "light") {
+    document.body.classList.remove("dark");
+}
+
+themeToggle.addEventListener("click", () => {
+    const isDark = document.body.classList.toggle("dark");
+    try {
+        localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+    } catch (e) {
+        // bỏ qua nếu trình duyệt chặn localStorage
     }
 });
