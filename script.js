@@ -1,7 +1,7 @@
 const MODES = {
-    focus: { label: "Tập trung", minutes: 25 },
-    short: { label: "Nghỉ ngắn", minutes: 5 },
-    long: { label: "Nghỉ dài", minutes: 15 },
+    focus: { label: "Tập trung", minutes: 25, max: 120 },
+    short: { label: "Nghỉ ngắn", minutes: 5, max: 60 },
+    long: { label: "Nghỉ dài", minutes: 15, max: 60 },
 };
 
 const timeEl = document.getElementById("time");
@@ -9,6 +9,49 @@ const statusEl = document.getElementById("status");
 const countEl = document.getElementById("count");
 const progressEl = document.getElementById("progress-bar");
 const modeButtons = document.querySelectorAll("[data-mode]");
+const soundToggle = document.getElementById("sound-toggle");
+const minuteInputs = {
+    focus: document.getElementById("minutes-focus"),
+    short: document.getElementById("minutes-short"),
+    long: document.getElementById("minutes-long"),
+};
+
+const SETTINGS_KEY = "pomodoro-settings";
+
+function loadSettings() {
+    try {
+        return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+    } catch (error) {
+        return {};
+    }
+}
+
+function saveSettings() {
+    const data = { sound: soundToggle.checked };
+    Object.keys(MODES).forEach((mode) => {
+        data[mode] = MODES[mode].minutes;
+    });
+    try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(data));
+    } catch (error) {
+        // bỏ qua nếu trình duyệt chặn localStorage
+    }
+}
+
+function clampMinutes(value, max) {
+    const n = Math.round(Number(value));
+    if (!Number.isFinite(n) || n < 1) return 1;
+    return Math.min(n, max);
+}
+
+const savedSettings = loadSettings();
+Object.keys(MODES).forEach((mode) => {
+    if (savedSettings[mode] !== undefined) {
+        MODES[mode].minutes = clampMinutes(savedSettings[mode], MODES[mode].max);
+    }
+    minuteInputs[mode].value = MODES[mode].minutes;
+});
+soundToggle.checked = savedSettings.sound !== false;
 
 let currentMode = "focus";
 let remainingSeconds = MODES[currentMode].minutes * 60;
@@ -114,3 +157,14 @@ document.getElementById("reset").addEventListener("click", () => setMode(current
 modeButtons.forEach((btn) => {
     btn.addEventListener("click", () => setMode(btn.dataset.mode));
 });
+
+Object.keys(MODES).forEach((mode) => {
+    minuteInputs[mode].addEventListener("change", () => {
+        MODES[mode].minutes = clampMinutes(minuteInputs[mode].value, MODES[mode].max);
+        minuteInputs[mode].value = MODES[mode].minutes;
+        saveSettings();
+        if (mode === currentMode && timerId === null) setMode(currentMode);
+    });
+});
+
+soundToggle.addEventListener("change", saveSettings);
